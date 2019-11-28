@@ -18,15 +18,26 @@ use Illuminate\Http\Request;
 // });
 
 Route::get('/users', 'UserController@fn_getUsers');
-Route::post('/user', 'UserController@fn_userAction')->middleware('cors');
 // Route::post('/user', 'UserController@fn_userAction');
-Route::get('/posts','PostController@index');
-Route::post('/image', 'ImageController@fn_uploadImage');//->middleware('cors');
 
-// testing purposes
+// UserController
+// user => create_user
+// user => login_user
+// user => update_user  : not complete
+Route::post('/user', 'UserController@fn_userAction')->middleware('cors');
+
+// PostController
+Route::post('/newpost', 'PostController@fn_newPost')->middleware('cors');
+
+
+// testing upload images
+Route::get('/posts','PostController@index');
+Route::post('/image', 'ImageController@fn_uploadImage')->middleware('cors');
+
+
+// testing simple API
 //Route::get('/testingg', 'UserController@fn_testGetAPI');
 // Route::get('/testingg', 'UserController@fn_testGetAPI')->middleware('testcors');
 Route::get('/testingg', 'UserController@fn_testGetAPI')->middleware('cors');
-
 // Route::post('/testingp', 'UserController@fn_testPostAPI');
 Route::post('/testingp', 'UserController@fn_testPostAPI')->middleware('cors');

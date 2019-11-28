@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use \Illuminate\Database\QueryException;
-use Exception;
+// use Exception;
 
 class UserController extends Controller
 {
@@ -20,63 +20,67 @@ class UserController extends Controller
     }
 
     function fn_userAction(Request $request){
-        $a_json = $request->all();
 
-        $req_action = array_key_exists("action",$a_json) ? $a_json["action"] : "";
+        $req_action = $request->has("action") ? $request["action"] : null ;
+
+        if($req_action == null){
+            return response()->json($this->fn_responseMsg('action key not found'));
+        }
 
         if ($req_action == "create_user"){
 
-            $a_data = $this->fn_createUser($a_json);
+            $a_data = $this->fn_createUser($request);
 
             return response()->json($a_data);
 
 
         }else if ($req_action == "login_user"){
 
-            $a_data = $this->fn_loginUser($a_json);
+            $a_data = $this->fn_loginUser($request);
 
             return response()->json($a_data);
 
         }else if ($req_action == "update_user"){
 
-            $a_data =  $this->fn_updateUser($a_json);
+            $a_data =  $this->fn_updateUser($request);
 
             return response()->json($a_data);
 
         }else{
-            return response()->json(['message'=> 'no action key in body']);
+            return response()->json($this->fn_responseMsg('no available functiony'));
         }
 
     }
 
-    function fn_createUser($a_json) {
-        $status = 0;
-        $message = "";
-        $a_data = NULL;
+    function fn_createUser(Request $request) {
 
-        try {
-            $a_data = User::create($a_json);
+        if($request->has("username") && $request->has("email") && $request->has("password") ){
+            $a_json = $request->all();
+            try {
+                $a_data = User::create($a_json);
 
-            $message = "Create User Success";
-            $status = 1;
+                $message = "Create User Success";
 
-        } catch (QueryException $exception) {
+                return $this->fn_responseMsg($message,1,$a_data);
 
-            $message = $exception->errorInfo;
-            $status = 0;
+            } catch (QueryException $exception) {
 
+                // $message = $exception->errorInfo;
+                $message = $exception->getMessage();
+
+                return $this->fn_responseMsg($message);
+
+            }
+
+        }else{
+            return $this->fn_responseMsg("fn_createUser: Required Field incorrect");
         }
-
-        return $this->fn_responseMsg($status,$message,$a_data);
 
     }
 
-    function fn_loginUser($a_json){
-        $status = 0;
-        $message = "";
-        $a_data = NULL;
-
-        try{
+    function fn_loginUser(Request $request){
+        if($request->has("username") && $request->has("password") ){
+            $a_json = $request->all();
             $username = $a_json["username"];
             // $email = $a_json["email"];
             $password = $a_json["password"];
@@ -87,24 +91,22 @@ class UserController extends Controller
                 ->get();
 
                 $status = (sizeof($a_data)== 1)? 1:0;
-                $message = $status ? "Login User Success" : "User not found";
+                $message = $status ? "Login User Success" : "Login User Failed ";
+                return $this->fn_responseMsg($message,$status,$a_data);
 
             } catch (QueryException $exception) {
 
-                $message = $exception->errorInfo;
-                $status = 0;
-
+                $message = $exception->getMessage();
+                return $this->fn_responseMsg($message);
             }
 
-        } catch (Exception $e) {
-            $status = 0;
-            $message  = $e->getMessage();
+        }else{
+            return $this->fn_responseMsg("fn_loginUser: Required Field incorrect");
         }
 
-        return $this->fn_responseMsg($status,$message,$a_data);
     }
 
-    function fn_updateUser($a_json){
+    function fn_updateUser(Request $request){
 
         $status = 0;
         $message = "";
@@ -135,7 +137,7 @@ class UserController extends Controller
 
     function fn_checkEmailExist($a_json){}
 
-    function fn_responseMsg($status, $msg, $data=NULL){
+    function fn_responseMsg( $msg, $status = 0,$data=NULL){
 
         $json_res_msg = array(
             "status"=> $status,
@@ -148,16 +150,13 @@ class UserController extends Controller
 
     function fn_testGetAPI(){
 
-
         // dd("hello");
-        return response()->json(['message'=> 'testing Get API']);
-
+        return response()->json(['message'=> 'testing Get API Success']);
     }
 
     function fn_testPostAPI(Request $request){
 
-        return response()->json(['message'=> 'testing Post API']);
-
+        return response()->json(['message'=> 'testing Post API Success']);
     }
 
 
