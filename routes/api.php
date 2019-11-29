@@ -28,10 +28,11 @@ Route::post('/user', 'UserController@fn_userAction')->middleware('cors');
 
 // PostController
 Route::post('/newpost', 'PostController@fn_newPost')->middleware('cors');
+Route::post('/getposts','PostController@fn_getPosts')->middleware('cors');
 
 
 // testing upload images
-Route::get('/posts','PostController@index');
+Route::get('/posts','PostController@index')->middleware('cors');
 Route::post('/image', 'ImageController@fn_uploadImage')->middleware('cors');
 
 
