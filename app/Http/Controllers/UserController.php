@@ -156,7 +156,8 @@ class UserController extends Controller
 
     function fn_testPostAPI(Request $request){
 
-        return response()->json(['message'=> 'testing Post API Success']);
+        $timeStamp = now();
+        return response()->json($this->fn_responseMsg('testing POST API success',1));
     }
 
 

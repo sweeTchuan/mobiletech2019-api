@@ -18,9 +18,21 @@ class PostController extends Controller
 
     public function fn_getPosts()
     {
-        $posts = \App\Post::all();
+        // $posts = \App\Post::all();
+        $posts = \App\Post::with('user')->orderBy('created_at','desc')->get();
 
         $a_data = $this->fn_responseMsg("Get all posts",1,$posts);
+
+        return response()->json($a_data);
+    }
+
+    public function fn_showAlltPostsWithUser()
+    {
+        // $posts = \App\Post::all();
+        // $posts = \App\Post::join('users', 'posts.user_id', '=', 'users.id')->get();
+        $posts = \App\Post::with('user')->get();
+
+        $a_data = $this->fn_responseMsg("Get all posts users",1,$posts);
 
         return response()->json($a_data);
     }
