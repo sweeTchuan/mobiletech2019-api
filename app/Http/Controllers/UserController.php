@@ -9,7 +9,7 @@ use \Illuminate\Database\QueryException;
 
 class UserController extends Controller
 {
-    //
+    // sample
     function fn_getUsers(){
         $a_data = User::all();
 
@@ -19,6 +19,7 @@ class UserController extends Controller
         return response()->json($a_data);
     }
 
+    // api call to this single function to perform selected action
     function fn_userAction(Request $request){
 
         $req_action = $request->has("action") ? $request["action"] : null ;
@@ -59,11 +60,12 @@ class UserController extends Controller
             return response()->json($a_data);
 
         }else{
-            return response()->json($this->fn_responseMsg('no available functiony'));
+            return response()->json($this->fn_responseMsg('no available function'));
         }
 
     }
 
+    // insert new entry to user table
     function fn_createUser(Request $request) {
 
         if($request->has("username") && $request->has("email") && $request->has("password") ){
@@ -90,6 +92,7 @@ class UserController extends Controller
 
     }
 
+    // match input with user table for login
     function fn_loginUser(Request $request){
         if($request->has("username") && $request->has("password") ){
             $a_json = $request->all();
@@ -118,6 +121,7 @@ class UserController extends Controller
 
     }
 
+    // update user field without profile picture path
     function fn_updateUser(Request $request){
         if($request->has('id')){
             $a_json = $request->all();
@@ -145,6 +149,7 @@ class UserController extends Controller
         }
     }
 
+    // update profile image and save image to storage
     public function fn_updateProfilePic(Request $request){
 
         if($request->hasFile('image_profile') && $request->has('username')){
@@ -172,6 +177,7 @@ class UserController extends Controller
         }
     }
 
+    // update user table for all field
     function fn_updateProfileAll(Request $request){
 
 
@@ -193,12 +199,16 @@ class UserController extends Controller
 
     }
 
+    // future work
     function fn_changePassword($a_json){}
 
+    // future work
     function fn_checkUsernameExist($a_json){}
 
+    // future work
     function fn_checkEmailExist($a_json){}
 
+    // custom http response msg
     function fn_responseMsg( $msg, $status = 0,$data=NULL){
 
         $json_res_msg = array(
@@ -210,12 +220,15 @@ class UserController extends Controller
         return $json_res_msg;
     }
 
+
+    // testing purposes
     function fn_testGetAPI(){
 
         // dd("hello");
         return response()->json(['message'=> 'testing Get API Success']);
     }
 
+    // testing purposes
     function fn_testPostAPI(Request $request){
 
         $timeStamp = now();

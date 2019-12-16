@@ -16,6 +16,7 @@ class PostController extends Controller
         return response()->json($posts);
     }
 
+    // load all post table entry
     public function fn_getPosts()
     {
         // $posts = \App\Post::all();
@@ -26,17 +27,7 @@ class PostController extends Controller
         return response()->json($a_data);
     }
 
-    public function fn_showAlltPostsWithUser()
-    {
-        // $posts = \App\Post::all();
-        // $posts = \App\Post::join('users', 'posts.user_id', '=', 'users.id')->get();
-        $posts = \App\Post::with('user')->get();
-
-        $a_data = $this->fn_responseMsg("Get all posts users",1,$posts);
-
-        return response()->json($a_data);
-    }
-
+    // creating a new entry in post table
     public function fn_newPost(Request $request){
 
         if($request->hasFile('image') && $request->has('caption') && $request->has('user_id')){
@@ -90,6 +81,7 @@ class PostController extends Controller
         }
     }
 
+    // custom http response msg
     function fn_responseMsg( $msg, $status = 0,$data=NULL){
 
         $json_res_msg = array(
@@ -101,4 +93,14 @@ class PostController extends Controller
         return $json_res_msg;
     }
 
+    // public function fn_showAlltPostsWithUser()
+    // {
+    //     // $posts = \App\Post::all();
+    //     // $posts = \App\Post::join('users', 'posts.user_id', '=', 'users.id')->get();
+    //     $posts = \App\Post::with('user')->get();
+
+    //     $a_data = $this->fn_responseMsg("Get all posts users",1,$posts);
+
+    //     return response()->json($a_data);
+    // }
 }
