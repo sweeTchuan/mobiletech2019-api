@@ -11,7 +11,7 @@ class PostController extends Controller
 {
     public function index()
     {
-        $posts = \App\Post::all()->latest('created_at');
+        $posts = \App\Post::all();
 
         return response()->json($posts);
     }

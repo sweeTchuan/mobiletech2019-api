@@ -30,6 +30,7 @@ Route::post('/user', 'UserController@fn_userAction')->middleware('cors');
 Route::post('/newpost', 'PostController@fn_newPost')->middleware('cors');
 Route::post('/getposts','PostController@fn_getPosts')->middleware('cors');
 
+// same as getposts, testing
 Route::post('/allpostsdetails','PostController@fn_showAlltPostsWithUser')->middleware('cors');
 
 

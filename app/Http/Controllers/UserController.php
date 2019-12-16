@@ -46,6 +46,18 @@ class UserController extends Controller
 
             return response()->json($a_data);
 
+        }else if ($req_action == "update_user_profile_pic"){
+
+            $a_data =  $this->fn_updateProfilePic($request);
+
+            return response()->json($a_data);
+
+        }else if ($req_action == "update_user_profile_all"){
+
+            $a_data =  $this->fn_updateProfileAll($request);
+
+            return response()->json($a_data);
+
         }else{
             return response()->json($this->fn_responseMsg('no available functiony'));
         }
@@ -107,29 +119,79 @@ class UserController extends Controller
     }
 
     function fn_updateUser(Request $request){
+        if($request->has('id')){
+            $a_json = $request->all();
+            try {
+                $a_data = User::where('id', $a_json['id'])
+                ->update([
+                    'username' => $a_json['username'],
+                    'email' => $a_json['email'],
+                    'name' => $a_json['name']
+                    ]);
 
-        $status = 0;
-        $message = "";
-        $a_data = NULL;
+                $status = $a_data;
+                $message = $a_data ? "Update User Success" : "Update User Fail";
+                return $this->fn_responseMsg($message,$status);
 
-        try {
-            $a_data = User::where('username', $a_json['username'])
-            ->update(['email' => $a_json['email'], 'password' => $a_json['password']]);
+            } catch (QueryException $exception) {
 
-            $status = $a_data;
-            $message = $a_data ? "Update User Success" : "Update User Fail";
+                $message = $exception->getMessage();
+                return $this->fn_responseMsg($message);
 
-        } catch (QueryException $exception) {
+            }
+        }else{
 
-            $message = $exception->errorInfo;
-            $status = 0;
-
+            return $this->fn_responseMsg("fn_updateUser: Required Field incorrect");
         }
-
-        return $this->fn_responseMsg($status,$message);
     }
 
-    function fn_changeUsername($a_json){}
+    public function fn_updateProfilePic(Request $request){
+
+        if($request->hasFile('image_profile') && $request->has('username')){
+            $path = $request->file('image_profile')->store('ProfileImages' , 'public');
+            $a_json = $request->all();
+
+            try {
+                $a_data = User::where('username', $a_json['username'])
+                ->update(['pic_path_name' => "$path"]);
+
+                $status = $a_data;
+                $message = $a_data ? "Update User Profile Pic Success" : "Update Profile Pic User Fail";
+
+                return $this->fn_responseMsg($message,$status,$path);
+
+            } catch (QueryException $exception) {
+                // $message = $exception->errorInfo;
+                $message = $exception->getMessage();
+                return $this->fn_responseMsg($message);
+            }
+
+        }else{
+
+            return $this->fn_responseMsg("fn_updateProfilePic: Required Field incorrect");
+        }
+    }
+
+    function fn_updateProfileAll(Request $request){
+
+
+        $a_data2 =  $this->fn_updateUser($request);
+
+        $check = $a_data2["status"];
+
+        if($check == 1){
+            $a_data =  $this->fn_updateProfilePic($request);
+            $res = array(
+                "op_profile_pic"=> $a_data,
+                "op_profile" => $a_data2 ,
+            );
+            return $this->fn_responseMsg("Update All Operation done",1,$res);
+        }else{
+            return $this->fn_responseMsg("Update All Operation Fail",0);
+        }
+
+
+    }
 
     function fn_changePassword($a_json){}
 
